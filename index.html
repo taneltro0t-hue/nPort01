@@ -1,0 +1,1239 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="slides-format" content="viewport">
+<title>Цифровой Порт Будущего — ООО «Низкий Свет»</title>
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Sora:wght@100;200;300;400;500;600;700;800&family=JetBrains+Mono:wght@300;400;500&display=swap" rel="stylesheet">
+
+<style>
+:root{
+  --bg:#000000;
+  --bg-soft:#0a0a0a;
+  --ink:#ffffff;
+  --ink-2:#d4d4d4;
+  --ink-3:#7a7a7a;
+  --ink-4:#3d3d3d;
+  --hairline:rgba(255,255,255,0.09);
+  --hairline-strong:rgba(255,255,255,0.18);
+  --accent:#E82127;       /* Tesla red — used sparingly */
+  --accent-dim:rgba(232,33,39,0.6);
+  --font-display:'Sora',-apple-system,BlinkMacSystemFont,sans-serif;
+  --font-mono:'JetBrains Mono',ui-monospace,monospace;
+}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+html,body{background:var(--bg);color:var(--ink);font-family:var(--font-display);height:100vh;width:100vw;overflow:hidden;-webkit-font-smoothing:antialiased;-moz-osx-font-smoothing:grayscale}
+body{font-weight:300;letter-spacing:-0.005em}
+
+/* ---------- DECK SCAFFOLDING ---------- */
+.deck{position:relative;width:100vw;height:100vh}
+.slide{
+  position:absolute;inset:0;
+  display:flex;flex-direction:column;
+  background:var(--bg);
+  opacity:0;pointer-events:none;
+  transition:opacity 0.6s cubic-bezier(0.4,0,0.2,1);
+  overflow:hidden;
+}
+.slide.active{opacity:1;pointer-events:all}
+
+/* Grain overlay — Tesla-esque subtle texture */
+.slide::after{
+  content:'';position:absolute;inset:0;pointer-events:none;z-index:50;
+  background-image:url("data:image/svg+xml,%3Csvg viewBox='0 0 400 400' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='2'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.6'/%3E%3C/svg%3E");
+  opacity:0.035;mix-blend-mode:overlay;
+}
+/* Vignette */
+.slide::before{
+  content:'';position:absolute;inset:0;pointer-events:none;z-index:49;
+  background:radial-gradient(ellipse at center, transparent 55%, rgba(0,0,0,0.7) 100%);
+}
+
+/* ---------- PERSISTENT UI CHROME ---------- */
+.chrome-top{
+  position:absolute;top:0;left:0;right:0;
+  padding:28px clamp(32px,5vw,72px) 20px;
+  display:flex;justify-content:space-between;align-items:center;
+  z-index:40;
+}
+.chrome-bottom{
+  position:absolute;bottom:0;left:0;right:0;
+  padding:20px clamp(32px,5vw,72px) 28px;
+  display:flex;justify-content:space-between;align-items:center;
+  z-index:40;
+}
+.brand{
+  font-family:var(--font-mono);font-size:10px;
+  letter-spacing:0.22em;text-transform:uppercase;
+  color:var(--ink-2);font-weight:500;
+}
+.brand-dot{display:inline-block;width:6px;height:6px;background:var(--accent);margin-right:10px;vertical-align:1px;border-radius:50%;box-shadow:0 0 12px var(--accent-dim)}
+.doc-meta{font-family:var(--font-mono);font-size:10px;letter-spacing:0.22em;text-transform:uppercase;color:var(--ink-3);font-weight:400}
+
+/* Hairline frame */
+.frame{
+  position:absolute;
+  left:clamp(32px,5vw,72px);right:clamp(32px,5vw,72px);
+  top:68px;bottom:64px;
+  border-top:1px solid var(--hairline);
+  border-bottom:1px solid var(--hairline);
+  pointer-events:none;z-index:5;
+}
+
+/* ---------- CONTENT AREA ---------- */
+.stage{
+  position:absolute;
+  left:clamp(32px,5vw,72px);right:clamp(32px,5vw,72px);
+  top:84px;bottom:80px;
+  display:flex;flex-direction:column;
+  z-index:10;
+}
+
+/* Labels */
+.kicker{
+  display:inline-flex;align-items:center;gap:14px;
+  font-family:var(--font-mono);font-size:10px;
+  letter-spacing:0.24em;text-transform:uppercase;
+  color:var(--ink-3);font-weight:400;
+}
+.kicker-num{color:var(--ink);font-weight:500}
+.kicker-bar{width:32px;height:1px;background:var(--hairline-strong)}
+.kicker .accent{color:var(--accent)}
+
+/* Big editorial headlines */
+.h-display{
+  font-family:var(--font-display);
+  font-weight:200;
+  font-size:clamp(3rem,7.2vw,7.5rem);
+  line-height:0.95;
+  letter-spacing:-0.035em;
+  color:var(--ink);
+}
+.h-display .thin{font-weight:100}
+.h-display .accent{color:var(--accent)}
+
+.h-xl{
+  font-family:var(--font-display);
+  font-weight:200;
+  font-size:clamp(2.2rem,5vw,4.5rem);
+  line-height:1.02;
+  letter-spacing:-0.028em;
+  color:var(--ink);
+}
+.h-lg{
+  font-family:var(--font-display);
+  font-weight:300;
+  font-size:clamp(1.6rem,3.4vw,3rem);
+  line-height:1.05;
+  letter-spacing:-0.025em;
+  color:var(--ink);
+}
+.h-md{
+  font-family:var(--font-display);
+  font-weight:400;
+  font-size:clamp(1rem,1.4vw,1.25rem);
+  line-height:1.3;
+  letter-spacing:-0.01em;
+  color:var(--ink);
+}
+
+/* Body text */
+.body-lg{
+  font-size:clamp(0.95rem,1.3vw,1.1rem);
+  line-height:1.55;
+  color:var(--ink-2);
+  font-weight:300;
+  max-width:60ch;
+}
+.body{
+  font-size:clamp(0.8rem,1vw,0.92rem);
+  line-height:1.6;
+  color:var(--ink-2);
+  font-weight:300;
+  max-width:56ch;
+}
+.body-sm{
+  font-size:0.78rem;
+  line-height:1.55;
+  color:var(--ink-3);
+  font-weight:300;
+}
+.mono{font-family:var(--font-mono);font-weight:400;font-size:0.72rem;letter-spacing:0.1em;text-transform:uppercase;color:var(--ink-3)}
+
+/* Stats */
+.stat-xl{
+  font-family:var(--font-display);
+  font-weight:100;
+  font-size:clamp(4rem,11vw,10rem);
+  line-height:0.85;
+  letter-spacing:-0.055em;
+  color:var(--ink);
+}
+.stat-lg{
+  font-family:var(--font-display);
+  font-weight:200;
+  font-size:clamp(2.5rem,5vw,4rem);
+  line-height:0.9;
+  letter-spacing:-0.04em;
+  color:var(--ink);
+}
+
+/* Hairline row */
+.hr-row{
+  border-top:1px solid var(--hairline);
+  padding:24px 0;
+  display:grid;
+  grid-template-columns:60px 1fr;
+  gap:32px;
+  align-items:baseline;
+}
+.hr-row:last-child{border-bottom:1px solid var(--hairline)}
+.hr-row .num{
+  font-family:var(--font-mono);font-size:11px;
+  color:var(--ink-3);letter-spacing:0.1em;
+}
+
+/* Product cards — minimal, editorial */
+.prod-card{
+  padding:28px 4px 28px 4px;
+  border-top:1px solid var(--hairline);
+  position:relative;
+  display:flex;flex-direction:column;gap:16px;
+  min-height:180px;
+  transition:border-color 0.3s ease;
+}
+.prod-card:last-child{border-bottom:1px solid var(--hairline)}
+.prod-card:hover{border-top-color:var(--hairline-strong)}
+.prod-card .prod-num{font-family:var(--font-mono);font-size:11px;color:var(--ink-3);letter-spacing:0.1em}
+.prod-card .prod-name{font-size:clamp(1.1rem,1.6vw,1.5rem);font-weight:400;letter-spacing:-0.02em;color:var(--ink)}
+.prod-card .prod-desc{font-size:0.82rem;color:var(--ink-3);line-height:1.5;font-weight:300}
+.prod-card .prod-tag{font-family:var(--font-mono);font-size:10px;color:var(--ink-4);letter-spacing:0.15em;text-transform:uppercase}
+
+/* Grid layouts */
+.grid-2{display:grid;grid-template-columns:1fr 1fr;gap:clamp(40px,6vw,96px)}
+.grid-3{display:grid;grid-template-columns:repeat(3,1fr);gap:clamp(24px,3vw,48px)}
+.grid-6{display:grid;grid-template-columns:repeat(3,1fr);gap:0;border-left:1px solid var(--hairline);border-right:1px solid var(--hairline)}
+.grid-6 > .prod-card{
+  border-top:1px solid var(--hairline);
+  border-bottom:1px solid var(--hairline);
+  padding:28px 24px;
+  margin:0;
+}
+.grid-6 > .prod-card:nth-child(-n+3){border-top:none}
+.grid-6 > .prod-card:nth-child(n+4){border-top:1px solid var(--hairline)}
+.grid-6 > .prod-card:not(:nth-child(3n)){border-right:1px solid var(--hairline)}
+
+/* Vertical center */
+.center-y{flex:1;display:flex;flex-direction:column;justify-content:center}
+.center-y-start{flex:1;display:flex;flex-direction:column;justify-content:flex-start;padding-top:2vh}
+.space-between{flex:1;display:flex;flex-direction:column;justify-content:space-between}
+
+/* Reveal */
+.reveal{opacity:0;transform:translateY(18px)}
+
+/* Accent elements */
+.red-line{width:48px;height:2px;background:var(--accent);box-shadow:0 0 16px var(--accent-dim)}
+.red-dot{display:inline-block;width:7px;height:7px;border-radius:50%;background:var(--accent);box-shadow:0 0 10px var(--accent-dim)}
+.hr-thin{width:100%;height:1px;background:var(--hairline);border:none}
+
+/* Navigation */
+.nav{
+  position:fixed;bottom:20px;left:50%;transform:translateX(-50%);
+  z-index:100;display:flex;align-items:center;gap:20px;
+  padding:10px 20px;
+  background:rgba(10,10,10,0.8);
+  backdrop-filter:blur(20px);
+  border:1px solid var(--hairline);
+  border-radius:2px;
+}
+.nav-btn{
+  background:transparent;border:none;color:var(--ink-2);
+  font-family:var(--font-display);font-size:16px;
+  cursor:pointer;padding:4px 8px;
+  transition:color 0.2s ease;font-weight:300;
+}
+.nav-btn:hover{color:var(--accent)}
+.nav-dots{display:flex;gap:5px}
+.nav-dot{width:4px;height:4px;background:var(--ink-4);border-radius:0;cursor:pointer;transition:all 0.3s ease}
+.nav-dot.active{background:var(--accent);width:20px;box-shadow:0 0 8px var(--accent-dim)}
+.nav-counter{font-family:var(--font-mono);font-size:10px;color:var(--ink-3);letter-spacing:0.1em;min-width:48px;text-align:center}
+
+/* Background diagram hint (subtle) */
+.bg-hairline-h{position:absolute;left:0;right:0;height:1px;background:var(--hairline);pointer-events:none;z-index:2}
+.bg-hairline-v{position:absolute;top:0;bottom:0;width:1px;background:var(--hairline);pointer-events:none;z-index:2}
+
+/* Scanline thin animation on title */
+@keyframes scanline{
+  0%{transform:translateY(-100%)}
+  100%{transform:translateY(2000%)}
+}
+.scanline{
+  position:absolute;left:0;right:0;height:1px;
+  background:linear-gradient(90deg,transparent,var(--accent-dim),transparent);
+  opacity:0.5;
+  animation:scanline 6s linear infinite;
+  pointer-events:none;z-index:3;
+}
+
+/* Typewriter accent caret */
+@keyframes blink{0%,50%{opacity:1}51%,100%{opacity:0}}
+.caret{display:inline-block;width:2px;height:0.85em;background:var(--accent);margin-left:4px;vertical-align:-2px;animation:blink 1s step-end infinite}
+
+/* Subtle gradient floor (like Tesla Model page product shots) */
+.floor-gradient{
+  position:absolute;left:0;right:0;bottom:0;height:40%;
+  background:radial-gradient(ellipse 60% 100% at 50% 100%, rgba(255,255,255,0.04) 0%, transparent 70%);
+  pointer-events:none;z-index:1;
+}
+.floor-red{
+  position:absolute;left:0;right:0;bottom:0;height:30%;
+  background:radial-gradient(ellipse 40% 100% at 50% 100%, rgba(232,33,39,0.08) 0%, transparent 70%);
+  pointer-events:none;z-index:1;
+}
+
+/* Phase card for roadmap */
+.phase{
+  padding:32px 28px;
+  border-left:1px solid var(--hairline);
+  display:flex;flex-direction:column;gap:16px;
+  position:relative;
+}
+.phase:first-child{border-left:none;padding-left:0}
+.phase-num{font-family:var(--font-mono);font-size:10px;color:var(--ink-3);letter-spacing:0.2em;text-transform:uppercase}
+.phase-title{font-size:clamp(1.2rem,2vw,1.75rem);font-weight:300;letter-spacing:-0.02em;line-height:1.1}
+.phase-list{list-style:none;padding:0;margin:12px 0;display:flex;flex-direction:column;gap:10px}
+.phase-list li{font-size:0.82rem;color:var(--ink-2);font-weight:300;padding-left:16px;position:relative;line-height:1.5}
+.phase-list li::before{content:'';position:absolute;left:0;top:0.7em;width:8px;height:1px;background:var(--ink-3)}
+.phase-outcome{margin-top:auto;padding-top:16px;border-top:1px solid var(--hairline);font-family:var(--font-mono);font-size:10px;letter-spacing:0.15em;text-transform:uppercase;color:var(--accent)}
+
+/* Protection grid */
+.prot-card{
+  padding:32px 28px;
+  border:1px solid var(--hairline);
+  display:flex;flex-direction:column;gap:14px;
+  transition:border-color 0.3s ease, background 0.3s ease;
+}
+.prot-card:hover{border-color:var(--hairline-strong);background:rgba(255,255,255,0.015)}
+.prot-num{font-family:var(--font-display);font-size:2.4rem;font-weight:100;color:var(--ink-3);letter-spacing:-0.04em;line-height:0.9}
+.prot-title{font-size:1.05rem;font-weight:400;letter-spacing:-0.01em;color:var(--ink)}
+.prot-desc{font-size:0.8rem;color:var(--ink-3);line-height:1.55;font-weight:300}
+
+/* Key-value row */
+.kv{
+  display:grid;grid-template-columns:40px 1fr auto;gap:24px;align-items:baseline;
+  padding:22px 0;
+  border-top:1px solid var(--hairline);
+}
+.kv:last-child{border-bottom:1px solid var(--hairline)}
+.kv-num{font-family:var(--font-mono);font-size:11px;color:var(--ink-3);letter-spacing:0.1em}
+.kv-title{font-size:clamp(0.95rem,1.3vw,1.1rem);font-weight:400;color:var(--ink);letter-spacing:-0.01em;margin-bottom:6px}
+.kv-desc{font-size:0.82rem;color:var(--ink-3);line-height:1.5;font-weight:300}
+.kv-side{font-family:var(--font-mono);font-size:10px;color:var(--ink-4);letter-spacing:0.15em;text-transform:uppercase}
+
+/* Counter animation target */
+@media (prefers-reduced-motion: reduce){
+  *{animation:none !important;transition-duration:0.2s !important}
+}
+</style>
+</head>
+<body>
+
+<div class="deck">
+
+<!-- ============================================ -->
+<!-- SLIDE 1 — TITLE                              -->
+<!-- ============================================ -->
+<div class="slide active" data-slide="1">
+  <div class="chrome-top">
+    <div class="brand"><span class="brand-dot"></span>ООО «Низкий Свет» &nbsp;·&nbsp; 2026</div>
+    <div class="doc-meta">Конфиденциально</div>
+  </div>
+  <div class="frame"></div>
+  <div class="floor-red"></div>
+  <div class="scanline"></div>
+
+  <div class="stage">
+    <div class="center-y" style="align-items:flex-start;">
+      <div class="reveal" style="margin-bottom:40px;">
+        <div class="kicker"><span class="kicker-bar"></span><span>Презентация &nbsp;/&nbsp; Q1</span><span class="kicker-num">2026</span></div>
+      </div>
+
+      <h1 class="h-display reveal" style="margin-bottom:8px;">
+        <span class="thin">Цифровой</span> Порт<br>
+        <span class="thin">Будущего</span><span class="caret"></span>
+      </h1>
+
+      <div class="reveal" style="margin:48px 0 28px;"><div class="red-line"></div></div>
+
+      <p class="body-lg reveal" style="max-width:52ch;">
+        Экосистема из шести цифровых инструментов для Н-Порт и БСГЛ. Построена, защищена, запатентована — ваша навсегда.
+      </p>
+    </div>
+
+    <div class="reveal" style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:48px;border-top:1px solid var(--hairline);padding-top:28px;">
+      <div>
+        <div class="mono" style="margin-bottom:8px;">Проект</div>
+        <div class="h-md">Н-Порт · БСГЛ</div>
+      </div>
+      <div>
+        <div class="mono" style="margin-bottom:8px;">Продуктов</div>
+        <div class="h-md">6 цифровых</div>
+      </div>
+      <div>
+        <div class="mono" style="margin-bottom:8px;">Первый MVP</div>
+        <div class="h-md">60 дней</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="chrome-bottom">
+    <div class="mono">NPORT.PRO</div>
+    <div class="mono">01 / 13</div>
+  </div>
+</div>
+
+<!-- ============================================ -->
+<!-- SLIDE 2 — О КОМПАНИИ                         -->
+<!-- ============================================ -->
+<div class="slide" data-slide="2">
+  <div class="chrome-top">
+    <div class="brand"><span class="brand-dot"></span>ООО «Низкий Свет»</div>
+    <div class="doc-meta">О компании</div>
+  </div>
+  <div class="frame"></div>
+
+  <div class="stage">
+    <div class="reveal" style="margin-bottom:56px;">
+      <div class="kicker"><span class="kicker-num">01</span><span class="kicker-bar"></span><span>Кто мы</span></div>
+    </div>
+
+    <div class="center-y">
+      <div class="grid-2" style="align-items:center;">
+        <div>
+          <h2 class="h-xl reveal" style="margin-bottom:32px;">
+            Мы строим цифровую<br>
+            <span style="color:var(--ink-3);font-weight:100;">инфраструктуру для</span><br>
+            бизнеса у воды.
+          </h2>
+          <p class="body reveal">
+            ООО «Низкий Свет» — агентство технологических решений. Проектируем цифровые продукты для компаний, где каждый час промедления стоит денег.
+          </p>
+        </div>
+
+        <div>
+          <div class="hr-row reveal">
+            <div class="num">01</div>
+            <div>
+              <div class="h-md" style="margin-bottom:6px;">Фокус</div>
+              <div class="body-sm">B2B-продукты для портовой логистики и коммерческой недвижимости</div>
+            </div>
+          </div>
+          <div class="hr-row reveal">
+            <div class="num">02</div>
+            <div>
+              <div class="h-md" style="margin-bottom:6px;">Подход</div>
+              <div class="body-sm">Только то, что работает. MVP — 60 дней. Никаких исследований ради исследований.</div>
+            </div>
+          </div>
+          <div class="hr-row reveal">
+            <div class="num">03</div>
+            <div>
+              <div class="h-md" style="margin-bottom:6px;">Защита</div>
+              <div class="body-sm">Каждый продукт патентуется. Бренды — ваши. Алгоритмы — ваши.</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="chrome-bottom">
+    <div class="mono">О компании</div>
+    <div class="mono">02 / 13</div>
+  </div>
+</div>
+
+<!-- ============================================ -->
+<!-- SLIDE 3 — ПРОБЛЕМЫ                           -->
+<!-- ============================================ -->
+<div class="slide" data-slide="3">
+  <div class="chrome-top">
+    <div class="brand"><span class="brand-dot"></span>ООО «Низкий Свет»</div>
+    <div class="doc-meta">Рынок сегодня</div>
+  </div>
+  <div class="frame"></div>
+
+  <div class="stage">
+    <div class="reveal" style="margin-bottom:56px;">
+      <div class="kicker"><span class="kicker-num">02</span><span class="kicker-bar"></span><span>Проблема</span></div>
+    </div>
+
+    <div class="center-y">
+      <h2 class="h-xl reveal" style="margin-bottom:64px;max-width:22ch;">
+        Три потери, которые<br>
+        <span style="color:var(--accent);">стоят вам денег</span> каждый день.
+      </h2>
+
+      <div class="reveal">
+        <div class="kv">
+          <div class="kv-num">01</div>
+          <div>
+            <div class="kv-title">Клиент ждёт расчёт 1–3 дня</div>
+            <div class="kv-desc">Пока вы считаете фрахт вручную — конкурент уже забрал заявку. В 2026 году это недопустимо.</div>
+          </div>
+          <div class="kv-side">Ручной ввод</div>
+        </div>
+        <div class="kv">
+          <div class="kv-num">02</div>
+          <div>
+            <div class="kv-title">Всё держится на телефонных звонках</div>
+            <div class="kv-desc">Трекинг груза, статус таможни, температура рефа — клиент звонит. Снова. И снова. Менеджер выгорает.</div>
+          </div>
+          <div class="kv-side">Колл-центр</div>
+        </div>
+        <div class="kv">
+          <div class="kv-num">03</div>
+          <div>
+            <div class="kv-title">Технопарк без очереди резидентов</div>
+            <div class="kv-desc">Площади готовятся к 2027, продавать нужно сейчас. Потенциальный резидент не видит онлайн ничего конкретного.</div>
+          </div>
+          <div class="kv-side">Н-Порт 2027</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="chrome-bottom">
+    <div class="mono">Проблема</div>
+    <div class="mono">03 / 13</div>
+  </div>
+</div>
+
+<!-- ============================================ -->
+<!-- SLIDE 4 — 6 ПРОДУКТОВ (OVERVIEW)             -->
+<!-- ============================================ -->
+<div class="slide" data-slide="4">
+  <div class="chrome-top">
+    <div class="brand"><span class="brand-dot"></span>ООО «Низкий Свет»</div>
+    <div class="doc-meta">Решение</div>
+  </div>
+  <div class="frame"></div>
+
+  <div class="stage">
+    <div class="reveal" style="margin-bottom:32px;">
+      <div class="kicker"><span class="kicker-num">03</span><span class="kicker-bar"></span><span>Экосистема</span></div>
+    </div>
+
+    <div class="grid-2 reveal" style="align-items:end;margin-bottom:40px;">
+      <h2 class="h-xl">
+        Шесть инструментов.<br>
+        <span style="color:var(--ink-3);font-weight:100;">Одна</span> экосистема.
+      </h2>
+      <p class="body" style="margin-bottom:8px;">
+        Каждый продукт закрывает конкретную боль. Вместе — формируют защищённую платформу, которую невозможно скопировать.
+      </p>
+    </div>
+
+    <div class="grid-6 reveal">
+      <div class="prod-card">
+        <div class="prod-num">01</div>
+        <div>
+          <div class="prod-name">NPORT ORACLE</div>
+          <div class="prod-tag" style="margin-top:4px;">Калькулятор фрахта</div>
+        </div>
+        <div class="prod-desc">Живой расчёт ставки + прогноз на 30 дней. Ответ клиенту — 10 секунд.</div>
+      </div>
+      <div class="prod-card">
+        <div class="prod-num">02</div>
+        <div>
+          <div class="prod-name">PORTIQ</div>
+          <div class="prod-tag" style="margin-top:4px;">AI-ассистент 24/7</div>
+        </div>
+        <div class="prod-desc">Помнит клиента, знает его грузы, отвечает в 3 ночи без менеджера.</div>
+      </div>
+      <div class="prod-card">
+        <div class="prod-num">03</div>
+        <div>
+          <div class="prod-name">BLACKSEA EXCHANGE</div>
+          <div class="prod-tag" style="margin-top:4px;">Биржа фрахта</div>
+        </div>
+        <div class="prod-desc">Маркетплейс грузов Чёрного моря. Комиссия 2,5% с каждой сделки.</div>
+      </div>
+      <div class="prod-card">
+        <div class="prod-num">04</div>
+        <div>
+          <div class="prod-name">REEFER PULSE</div>
+          <div class="prod-tag" style="margin-top:4px;">IoT-мониторинг</div>
+        </div>
+        <div class="prod-desc">Датчик в рефконтейнере → данные в телефон клиента онлайн.</div>
+      </div>
+      <div class="prod-card">
+        <div class="prod-num">05</div>
+        <div>
+          <div class="prod-name">NPORT SPACE</div>
+          <div class="prod-tag" style="margin-top:4px;">3D-конфигуратор</div>
+        </div>
+        <div class="prod-desc">Будущий резидент проектирует свой цех онлайн и бронирует с депозитом.</div>
+      </div>
+      <div class="prod-card">
+        <div class="prod-num">06</div>
+        <div>
+          <div class="prod-name">SEACHAIN</div>
+          <div class="prod-tag" style="margin-top:4px;">Блокчейн документов</div>
+        </div>
+        <div class="prod-desc">Защищённый документооборот. Экономия 2–5 дней на каждом рейсе.</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="chrome-bottom">
+    <div class="mono">Экосистема / 6 продуктов</div>
+    <div class="mono">04 / 13</div>
+  </div>
+</div>
+
+<!-- ============================================ -->
+<!-- PRODUCT SLIDE TEMPLATE (5-10)                -->
+<!-- ============================================ -->
+
+<!-- SLIDE 5 — NPORT ORACLE -->
+<div class="slide" data-slide="5">
+  <div class="chrome-top">
+    <div class="brand"><span class="brand-dot"></span>ООО «Низкий Свет»</div>
+    <div class="doc-meta">Продукт 01 / 06</div>
+  </div>
+  <div class="frame"></div>
+  <div class="floor-gradient"></div>
+
+  <div class="stage">
+    <div class="reveal" style="margin-bottom:32px;">
+      <div class="kicker"><span class="kicker-num">01</span><span class="kicker-bar"></span><span>Продукт &nbsp;·&nbsp; MVP 60 дней</span></div>
+    </div>
+
+    <div class="center-y">
+      <div class="grid-2" style="align-items:center;gap:80px;">
+        <div>
+          <h2 class="h-display reveal" style="margin-bottom:32px;font-size:clamp(2.8rem,5.5vw,5rem);">
+            NPORT<br><span class="thin">Oracle</span>
+          </h2>
+          <div class="reveal" style="margin-bottom:24px;"><div class="red-line"></div></div>
+          <p class="h-md reveal" style="margin-bottom:20px;font-weight:300;font-size:clamp(1.1rem,1.5vw,1.35rem);color:var(--ink-2);">
+            «Сколько стоит мой груз?» — ответ за 10&nbsp;секунд.
+          </p>
+          <p class="body reveal">
+            Клиент вводит маршрут и тип груза. Система мгновенно возвращает ставку и подсказывает: «Цены вырастут через две недели — зафиксируйте сегодня».
+          </p>
+        </div>
+
+        <div>
+          <div class="kv reveal" style="padding:26px 0;">
+            <div class="kv-num">→</div>
+            <div>
+              <div class="kv-title">Мгновенный расчёт</div>
+              <div class="kv-desc">Расчёт фрахта без участия менеджера</div>
+            </div>
+            <div class="kv-side">10 сек</div>
+          </div>
+          <div class="kv reveal" style="padding:26px 0;">
+            <div class="kv-num">→</div>
+            <div>
+              <div class="kv-title">Прогноз ставок</div>
+              <div class="kv-desc">Горизонт 30 дней на основании данных рынка</div>
+            </div>
+            <div class="kv-side">+30d</div>
+          </div>
+          <div class="kv reveal" style="padding:26px 0;">
+            <div class="kv-num">→</div>
+            <div>
+              <div class="kv-title">Black Sea Freight Index™</div>
+              <div class="kv-desc">Собственный индекс ставок региона — ни у кого нет</div>
+            </div>
+            <div class="kv-side">BSFI</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="chrome-bottom">
+    <div class="mono">NPORT Oracle</div>
+    <div class="mono">05 / 13</div>
+  </div>
+</div>
+
+<!-- SLIDE 6 — PORTIQ -->
+<div class="slide" data-slide="6">
+  <div class="chrome-top">
+    <div class="brand"><span class="brand-dot"></span>ООО «Низкий Свет»</div>
+    <div class="doc-meta">Продукт 02 / 06</div>
+  </div>
+  <div class="frame"></div>
+  <div class="floor-gradient"></div>
+
+  <div class="stage">
+    <div class="reveal" style="margin-bottom:32px;">
+      <div class="kicker"><span class="kicker-num">02</span><span class="kicker-bar"></span><span>Продукт &nbsp;·&nbsp; AI · Telegram · 24/7</span></div>
+    </div>
+
+    <div class="center-y">
+      <div class="grid-2" style="align-items:center;gap:80px;">
+        <div>
+          <h2 class="h-display reveal" style="margin-bottom:32px;font-size:clamp(2.8rem,5.5vw,5rem);">
+            <span class="thin">Port</span><br>IQ
+          </h2>
+          <div class="reveal" style="margin-bottom:24px;"><div class="red-line"></div></div>
+          <p class="h-md reveal" style="margin-bottom:20px;font-weight:300;font-size:clamp(1.1rem,1.5vw,1.35rem);color:var(--ink-2);">
+            Ассистент, который помнит всё о&nbsp;клиенте.
+          </p>
+          <p class="body reveal" style="margin-bottom:16px;">
+            В 3 ночи клиент пишет: «Где мой контейнер?» — PortIQ отвечает сразу. Знает грузы, историю, коды ТН ВЭД. Менеджер не нужен.
+          </p>
+          <p class="mono reveal" style="color:var(--ink-3);">
+            В основе — 20&nbsp;лет сделок БСГЛ
+          </p>
+        </div>
+
+        <div>
+          <div class="kv reveal" style="padding:26px 0;">
+            <div class="kv-num">→</div>
+            <div>
+              <div class="kv-title">Память клиента</div>
+              <div class="kv-desc">Помнит каждый груз, маршрут, проблему</div>
+            </div>
+            <div class="kv-side">LTV ↑</div>
+          </div>
+          <div class="kv reveal" style="padding:26px 0;">
+            <div class="kv-num">→</div>
+            <div>
+              <div class="kv-title">ВЭД-помощник</div>
+              <div class="kv-desc">Коды, таможня, документы — мгновенные ответы</div>
+            </div>
+            <div class="kv-side">HS</div>
+          </div>
+          <div class="kv reveal" style="padding:26px 0;">
+            <div class="kv-num">→</div>
+            <div>
+              <div class="kv-title">Лиды 24/7</div>
+              <div class="kv-desc">Собирает заявки, пока команда спит</div>
+            </div>
+            <div class="kv-side">CRM</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="chrome-bottom">
+    <div class="mono">PortIQ</div>
+    <div class="mono">06 / 13</div>
+  </div>
+</div>
+
+<!-- SLIDE 7 — BLACKSEA EXCHANGE -->
+<div class="slide" data-slide="7">
+  <div class="chrome-top">
+    <div class="brand"><span class="brand-dot"></span>ООО «Низкий Свет»</div>
+    <div class="doc-meta">Продукт 03 / 06</div>
+  </div>
+  <div class="frame"></div>
+  <div class="floor-gradient"></div>
+
+  <div class="stage">
+    <div class="reveal" style="margin-bottom:32px;">
+      <div class="kicker"><span class="kicker-num">03</span><span class="kicker-bar"></span><span>Продукт &nbsp;·&nbsp; Маркетплейс B2B</span></div>
+    </div>
+
+    <div class="center-y">
+      <div class="grid-2" style="align-items:center;gap:80px;">
+        <div>
+          <h2 class="h-display reveal" style="margin-bottom:32px;font-size:clamp(2.4rem,4.8vw,4.4rem);">
+            <span class="thin">Black Sea</span><br>Exchange
+          </h2>
+          <div class="reveal" style="margin-bottom:24px;"><div class="red-line"></div></div>
+          <p class="h-md reveal" style="margin-bottom:20px;font-weight:300;font-size:clamp(1.1rem,1.5vw,1.35rem);color:var(--ink-2);">
+            Первая биржа фрахта<br>Чёрного моря.
+          </p>
+          <p class="body reveal" style="margin-bottom:16px;">
+            Грузовладелец размещает заявку. Экспедиторы соревнуются за неё. БСГЛ забирает комиссию с каждой сделки — даже когда груз везёт кто-то другой.
+          </p>
+          <p class="mono reveal" style="color:var(--ink-3);">
+            Сетевой эффект защищает от копирования
+          </p>
+        </div>
+
+        <div style="display:flex;flex-direction:column;gap:32px;">
+          <div class="reveal" style="border-top:1px solid var(--hairline);padding-top:28px;">
+            <div class="stat-xl" data-count="2.5" data-suffix="%" style="font-size:clamp(5rem,9vw,8rem);">0%</div>
+            <div class="mono" style="margin-top:12px;">Комиссия с каждой сделки</div>
+          </div>
+          <div class="reveal" style="border-top:1px solid var(--hairline);padding-top:28px;">
+            <div class="h-md" style="margin-bottom:8px;">Зона охвата</div>
+            <div class="body-sm">Черноморский бассейн — ниша не занята ни Freightos, ни другими платформами. Первый мувер забирает рынок.</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="chrome-bottom">
+    <div class="mono">Black Sea Exchange</div>
+    <div class="mono">07 / 13</div>
+  </div>
+</div>
+
+<!-- SLIDE 8 — REEFER PULSE -->
+<div class="slide" data-slide="8">
+  <div class="chrome-top">
+    <div class="brand"><span class="brand-dot"></span>ООО «Низкий Свет»</div>
+    <div class="doc-meta">Продукт 04 / 06</div>
+  </div>
+  <div class="frame"></div>
+  <div class="floor-gradient"></div>
+
+  <div class="stage">
+    <div class="reveal" style="margin-bottom:32px;">
+      <div class="kicker"><span class="kicker-num">04</span><span class="kicker-bar"></span><span>Продукт &nbsp;·&nbsp; IoT · Рефконтейнеры</span></div>
+    </div>
+
+    <div class="center-y">
+      <div class="grid-2" style="align-items:center;gap:80px;">
+        <div>
+          <h2 class="h-display reveal" style="margin-bottom:32px;font-size:clamp(2.8rem,5.5vw,5rem);">
+            Reefer<br><span class="thin">Pulse</span>
+          </h2>
+          <div class="reveal" style="margin-bottom:24px;"><div class="red-line"></div></div>
+          <p class="h-md reveal" style="margin-bottom:20px;font-weight:300;font-size:clamp(1.1rem,1.5vw,1.35rem);color:var(--ink-2);">
+            Груз под контролем.<br>Каждую минуту.
+          </p>
+          <p class="body reveal" style="margin-bottom:16px;">
+            Датчик в рефконтейнере передаёт данные в телефон клиента в реальном времени. Если температура отклонилась — предупреждение за 4 часа до порчи.
+          </p>
+          <p class="mono reveal" style="color:var(--ink-3);">
+            Страховые дают скидку за подключённый мониторинг
+          </p>
+        </div>
+
+        <div>
+          <div class="kv reveal" style="padding:26px 0;">
+            <div class="kv-num">→</div>
+            <div>
+              <div class="kv-title">Температура онлайн</div>
+              <div class="kv-desc">Клиент видит данные прямо в телефоне</div>
+            </div>
+            <div class="kv-side">−30°C</div>
+          </div>
+          <div class="kv reveal" style="padding:26px 0;">
+            <div class="kv-num">→</div>
+            <div>
+              <div class="kv-title">Предсказание сбоя</div>
+              <div class="kv-desc">Предупреждение за 4 часа до порчи груза</div>
+            </div>
+            <div class="kv-side">−4h</div>
+          </div>
+          <div class="kv reveal" style="padding:26px 0;">
+            <div class="kv-num">→</div>
+            <div>
+              <div class="kv-title">Свободный рынок</div>
+              <div class="kv-desc">Ни FESCO, ни региональные конкуренты этого не предлагают</div>
+            </div>
+            <div class="kv-side">FIRST</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="chrome-bottom">
+    <div class="mono">Reefer Pulse</div>
+    <div class="mono">08 / 13</div>
+  </div>
+</div>
+
+<!-- SLIDE 9 — NPORT SPACE -->
+<div class="slide" data-slide="9">
+  <div class="chrome-top">
+    <div class="brand"><span class="brand-dot"></span>ООО «Низкий Свет»</div>
+    <div class="doc-meta">Продукт 05 / 06</div>
+  </div>
+  <div class="frame"></div>
+  <div class="floor-gradient"></div>
+
+  <div class="stage">
+    <div class="reveal" style="margin-bottom:32px;">
+      <div class="kicker"><span class="kicker-num">05</span><span class="kicker-bar"></span><span>Продукт &nbsp;·&nbsp; 3D · Технопарк Н-Порт 2027</span></div>
+    </div>
+
+    <div class="center-y">
+      <div class="grid-2" style="align-items:center;gap:80px;">
+        <div>
+          <h2 class="h-display reveal" style="margin-bottom:32px;font-size:clamp(2.8rem,5.5vw,5rem);">
+            NPORT<br><span class="thin">Space</span>
+          </h2>
+          <div class="reveal" style="margin-bottom:24px;"><div class="red-line"></div></div>
+          <p class="h-md reveal" style="margin-bottom:20px;font-weight:300;font-size:clamp(1.1rem,1.5vw,1.35rem);color:var(--ink-2);">
+            Постройте производство<br>до открытия парка.
+          </p>
+          <p class="body reveal">
+            Резидент заходит на сайт, в 3D расставляет кран-балку, ворота, требования к мощности. Видит стоимость и бронирует с депозитом 10%. Очередь формируется сейчас.
+          </p>
+        </div>
+
+        <div style="display:flex;flex-direction:column;gap:32px;">
+          <div class="reveal" style="border-top:1px solid var(--hairline);padding-top:28px;">
+            <div class="stat-xl" data-count="2027" style="font-size:clamp(5rem,9vw,8rem);">0</div>
+            <div class="mono" style="margin-top:12px;">Год открытия технопарка</div>
+            <div class="body-sm" style="margin-top:12px;color:var(--ink-3);">Продавать нужно сейчас — пока площади не разобраны</div>
+          </div>
+          <div class="reveal" style="border-top:1px solid var(--hairline);padding-top:28px;">
+            <div class="h-md" style="margin-bottom:8px;">Цифровой двойник</div>
+            <div class="body-sm">Резидент видит свой будущий цех в деталях — до подписания договора.</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="chrome-bottom">
+    <div class="mono">NPORT Space</div>
+    <div class="mono">09 / 13</div>
+  </div>
+</div>
+
+<!-- SLIDE 10 — SEACHAIN -->
+<div class="slide" data-slide="10">
+  <div class="chrome-top">
+    <div class="brand"><span class="brand-dot"></span>ООО «Низкий Свет»</div>
+    <div class="doc-meta">Продукт 06 / 06</div>
+  </div>
+  <div class="frame"></div>
+  <div class="floor-gradient"></div>
+
+  <div class="stage">
+    <div class="reveal" style="margin-bottom:32px;">
+      <div class="kicker"><span class="kicker-num">06</span><span class="kicker-bar"></span><span>Продукт &nbsp;·&nbsp; Блокчейн документооборот</span></div>
+    </div>
+
+    <div class="center-y">
+      <div class="grid-2" style="align-items:center;gap:80px;">
+        <div>
+          <h2 class="h-display reveal" style="margin-bottom:32px;font-size:clamp(2.8rem,5.5vw,5rem);">
+            Sea<br><span class="thin">Chain</span>
+          </h2>
+          <div class="reveal" style="margin-bottom:24px;"><div class="red-line"></div></div>
+          <p class="h-md reveal" style="margin-bottom:20px;font-weight:300;font-size:clamp(1.1rem,1.5vw,1.35rem);color:var(--ink-2);">
+            Документ, который<br>невозможно подделать.
+          </p>
+          <p class="body reveal" style="margin-bottom:16px;">
+            Каждый документ по грузу получает защищённую цифровую метку. Банк, таможня, страховая проверяют мгновенно — без звонков и факсов.
+          </p>
+          <p class="mono reveal" style="color:var(--accent);">
+            Кто устанавливает стандарт — тот им управляет
+          </p>
+        </div>
+
+        <div style="display:flex;flex-direction:column;gap:32px;">
+          <div class="reveal" style="border-top:1px solid var(--hairline);padding-top:28px;">
+            <div style="display:flex;align-items:baseline;gap:20px;">
+              <div class="stat-xl" data-count="5" style="font-size:clamp(5rem,9vw,8rem);">0</div>
+              <div class="h-md" style="color:var(--ink-3);">дней</div>
+            </div>
+            <div class="mono" style="margin-top:12px;">Экономия на каждом рейсе</div>
+          </div>
+          <div class="reveal" style="border-top:1px solid var(--hairline);padding-top:28px;">
+            <div class="h-md" style="margin-bottom:8px;">Первый в регионе</div>
+            <div class="body-sm">Блокчейн-документооборот для морской таможни — никто в Новороссийске этого не делает.</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="chrome-bottom">
+    <div class="mono">SeaChain</div>
+    <div class="mono">10 / 13</div>
+  </div>
+</div>
+
+<!-- ============================================ -->
+<!-- SLIDE 11 — ROADMAP                           -->
+<!-- ============================================ -->
+<div class="slide" data-slide="11">
+  <div class="chrome-top">
+    <div class="brand"><span class="brand-dot"></span>ООО «Низкий Свет»</div>
+    <div class="doc-meta">Дорожная карта</div>
+  </div>
+  <div class="frame"></div>
+
+  <div class="stage">
+    <div class="reveal" style="margin-bottom:32px;">
+      <div class="kicker"><span class="kicker-num">04</span><span class="kicker-bar"></span><span>Roadmap</span></div>
+    </div>
+
+    <div class="grid-2 reveal" style="align-items:end;margin-bottom:64px;">
+      <h2 class="h-xl">
+        Что и когда.<br>
+        <span style="color:var(--ink-3);font-weight:100;">Двенадцать месяцев</span> до стандарта.
+      </h2>
+      <p class="body" style="margin-bottom:8px;">
+        Три фазы: запуск — рост — доминирование. Каждая фаза закрывает конкретный коммерческий результат.
+      </p>
+    </div>
+
+    <div class="grid-3 reveal" style="gap:0;">
+      <div class="phase">
+        <div style="display:flex;align-items:center;gap:12px;">
+          <div class="red-dot"></div>
+          <div class="phase-num">Фаза 01 &nbsp;·&nbsp; 0–2 мес</div>
+        </div>
+        <div class="phase-title">Запуск</div>
+        <ul class="phase-list">
+          <li>PortIQ — AI-ассистент в Telegram</li>
+          <li>NPORT Oracle — калькулятор фрахта</li>
+          <li>Новый сайт на домене nport.pro</li>
+        </ul>
+        <div class="phase-outcome">Первые лиды с сайта</div>
+      </div>
+      <div class="phase">
+        <div style="display:flex;align-items:center;gap:12px;">
+          <div style="width:7px;height:7px;background:var(--ink-3);border-radius:50%;"></div>
+          <div class="phase-num">Фаза 02 &nbsp;·&nbsp; 3–6 мес</div>
+        </div>
+        <div class="phase-title">Рост</div>
+        <ul class="phase-list">
+          <li>BlackSea Exchange — биржа фрахта</li>
+          <li>Reefer Pulse — IoT-мониторинг</li>
+          <li>NPORT Space — 3D технопарка</li>
+        </ul>
+        <div class="phase-outcome" style="color:var(--ink-2);">Пассивный доход с биржи</div>
+      </div>
+      <div class="phase">
+        <div style="display:flex;align-items:center;gap:12px;">
+          <div style="width:7px;height:7px;background:var(--ink-3);border-radius:50%;"></div>
+          <div class="phase-num">Фаза 03 &nbsp;·&nbsp; 8–12 мес</div>
+        </div>
+        <div class="phase-title">Доминирование</div>
+        <ul class="phase-list">
+          <li>SeaChain — блокчейн документов</li>
+          <li>SEO Топ-1 Новороссийска</li>
+          <li>Партнёрская сеть ВЭД-агентов</li>
+        </ul>
+        <div class="phase-outcome" style="color:var(--ink-2);">Стандарт рынка за нами</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="chrome-bottom">
+    <div class="mono">Дорожная карта</div>
+    <div class="mono">11 / 13</div>
+  </div>
+</div>
+
+<!-- ============================================ -->
+<!-- SLIDE 12 — PROTECTION                        -->
+<!-- ============================================ -->
+<div class="slide" data-slide="12">
+  <div class="chrome-top">
+    <div class="brand"><span class="brand-dot"></span>ООО «Низкий Свет»</div>
+    <div class="doc-meta">Защита</div>
+  </div>
+  <div class="frame"></div>
+
+  <div class="stage">
+    <div class="reveal" style="margin-bottom:32px;">
+      <div class="kicker"><span class="kicker-num">05</span><span class="kicker-bar"></span><span>Почему это ваше навсегда</span></div>
+    </div>
+
+    <div class="grid-2 reveal" style="align-items:end;margin-bottom:48px;">
+      <h2 class="h-xl">
+        Конкурент не скопирует.<br>
+        <span style="color:var(--accent);">Вот почему.</span>
+      </h2>
+      <p class="body" style="margin-bottom:8px;">
+        Четыре уровня защиты превращают наши разработки в ваши бессрочные активы. Каждый уровень — отдельная юридическая и технологическая стена.
+      </p>
+    </div>
+
+    <div class="grid-2 reveal" style="gap:1px;background:var(--hairline);">
+      <div class="prot-card" style="background:var(--bg);border:none;">
+        <div class="prot-num">01</div>
+        <div class="prot-title">Товарные знаки</div>
+        <div class="prot-desc">NPORT ORACLE™ · PORTIQ™ · BSFI™ — регистрация в Роспатенте на Н-Порт / БСГЛ.</div>
+      </div>
+      <div class="prot-card" style="background:var(--bg);border:none;">
+        <div class="prot-num">02</div>
+        <div class="prot-title">Патенты на алгоритмы</div>
+        <div class="prot-desc">Алгоритмы калькулятора, прогноза ставок, IoT-мониторинга оформляются как патенты на изобретения.</div>
+      </div>
+      <div class="prot-card" style="background:var(--bg);border:none;">
+        <div class="prot-num">03</div>
+        <div class="prot-title">Коммерческая тайна</div>
+        <div class="prot-desc">Базы данных и методологии защищены по ст. 1465 ГК РФ. Воспроизвести с нуля невозможно.</div>
+      </div>
+      <div class="prot-card" style="background:var(--bg);border:none;">
+        <div class="prot-num">04</div>
+        <div class="prot-title">Сетевой эффект</div>
+        <div class="prot-desc">История сделок, рейтинги, накопленные данные — главный невоспроизводимый актив.</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="chrome-bottom">
+    <div class="mono">Защита</div>
+    <div class="mono">12 / 13</div>
+  </div>
+</div>
+
+<!-- ============================================ -->
+<!-- SLIDE 13 — CLOSE                             -->
+<!-- ============================================ -->
+<div class="slide" data-slide="13">
+  <div class="chrome-top">
+    <div class="brand"><span class="brand-dot"></span>ООО «Низкий Свет»</div>
+    <div class="doc-meta">Следующий шаг</div>
+  </div>
+  <div class="frame"></div>
+  <div class="floor-red"></div>
+  <div class="scanline"></div>
+
+  <div class="stage">
+    <div class="center-y" style="align-items:flex-start;">
+      <div class="reveal" style="margin-bottom:40px;">
+        <div class="kicker"><span class="kicker-bar"></span><span>Финал</span><span class="kicker-num">13 / 13</span></div>
+      </div>
+
+      <h2 class="h-display reveal" style="margin-bottom:8px;">
+        <span class="thin">Готовы</span><br>
+        начать?<span class="caret"></span>
+      </h2>
+
+      <div class="reveal" style="margin:48px 0 28px;"><div class="red-line"></div></div>
+
+      <p class="body-lg reveal" style="max-width:48ch;">
+        Первый MVP — через 60 дней. Первые лиды с сайта — до конца квартала. Предлагаем стартовать с двух инструментов одновременно.
+      </p>
+
+      <div class="reveal" style="margin-top:48px;display:grid;grid-template-columns:1fr 1fr 1fr;gap:48px;border-top:1px solid var(--hairline);padding-top:28px;width:100%;">
+        <div>
+          <div class="mono" style="margin-bottom:8px;">Стартуем с</div>
+          <div class="h-md">PortIQ + Oracle</div>
+        </div>
+        <div>
+          <div class="mono" style="margin-bottom:8px;">Первый результат</div>
+          <div class="h-md">60 дней</div>
+        </div>
+        <div>
+          <div class="mono" style="margin-bottom:8px;">Договор</div>
+          <div class="h-md">Фиксированная цена</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="chrome-bottom">
+    <div class="mono">ООО «Низкий Свет»</div>
+    <div class="mono">Конфиденциально · 2026</div>
+  </div>
+</div>
+
+</div><!-- /deck -->
+
+<!-- NAVIGATION -->
+<div class="nav">
+  <button class="nav-btn" onclick="changeSlide(-1)">‹</button>
+  <div class="nav-dots" id="dots"></div>
+  <button class="nav-btn" onclick="changeSlide(1)">›</button>
+  <div class="nav-counter" id="counter">01 / 13</div>
+</div>
+
+<script>
+let current = 1;
+const slides = document.querySelectorAll('.slide');
+const total = slides.length;
+const dotsEl = document.getElementById('dots');
+const counterEl = document.getElementById('counter');
+
+for (let i = 1; i <= total; i++) {
+  const d = document.createElement('div');
+  d.className = 'nav-dot' + (i === 1 ? ' active' : '');
+  d.onclick = () => goTo(i);
+  dotsEl.appendChild(d);
+}
+
+function pad(n){return String(n).padStart(2,'0')}
+
+function animateIn(slide){
+  slide.querySelectorAll('.reveal').forEach((el, i) => {
+    el.style.transition = 'none';
+    el.style.opacity = '0';
+    el.style.transform = 'translateY(18px)';
+    void el.offsetHeight;
+    const delay = i * 0.06;
+    el.style.transition = `opacity 0.6s cubic-bezier(0.2,0.7,0.2,1) ${delay}s, transform 0.6s cubic-bezier(0.2,0.7,0.2,1) ${delay}s`;
+    el.style.opacity = '1';
+    el.style.transform = 'translateY(0)';
+  });
+  // Counters
+  slide.querySelectorAll('[data-count]:not(.counted)').forEach(el => {
+    el.classList.add('counted');
+    const target = parseFloat(el.dataset.count);
+    const suffix = el.dataset.suffix || '';
+    const isFloat = !Number.isInteger(target);
+    let cur = 0;
+    const duration = 1400;
+    const start = performance.now();
+    function step(now){
+      const t = Math.min(1, (now - start) / duration);
+      const eased = 1 - Math.pow(1 - t, 3);
+      cur = target * eased;
+      el.textContent = (isFloat ? cur.toFixed(1) : Math.round(cur).toLocaleString()) + suffix;
+      if (t < 1) requestAnimationFrame(step);
+      else el.textContent = (isFloat ? target.toFixed(1) : Math.round(target).toLocaleString()) + suffix;
+    }
+    requestAnimationFrame(step);
+  });
+}
+
+function goTo(n){
+  if (n < 1 || n > total || n === current) return;
+  const prev = document.querySelector('.slide.active');
+  const next = document.querySelector(`.slide[data-slide="${n}"]`);
+  if (prev) prev.classList.remove('active');
+  if (next){
+    next.classList.add('active');
+    animateIn(next);
+  }
+  current = n;
+  document.querySelectorAll('.nav-dot').forEach((d, i) => d.classList.toggle('active', i + 1 === current));
+  counterEl.textContent = `${pad(current)} / ${pad(total)}`;
+}
+
+function changeSlide(dir){
+  let n = current + dir;
+  if (n < 1) n = total;
+  if (n > total) n = 1;
+  goTo(n);
+}
+
+document.addEventListener('keydown', (e) => {
+  if (e.key === 'ArrowRight' || e.key === ' ') { e.preventDefault(); changeSlide(1); }
+  if (e.key === 'ArrowLeft') { e.preventDefault(); changeSlide(-1); }
+  if (e.key === 'Home') goTo(1);
+  if (e.key === 'End') goTo(total);
+});
+
+let touchX = 0;
+document.addEventListener('touchstart', e => { touchX = e.touches[0].clientX; });
+document.addEventListener('touchend', e => {
+  const diff = touchX - e.changedTouches[0].clientX;
+  if (Math.abs(diff) > 50) changeSlide(diff > 0 ? 1 : -1);
+});
+
+// Initial animation
+try { animateIn(document.querySelector('.slide.active')); } catch(e) {}
+</script>
+</body>
+</html>
